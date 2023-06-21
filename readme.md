@@ -5,6 +5,7 @@ This script is used to retrieve the (ID, Type, and Name) of assets from a mod.
 ## Usage
 
 ```
+#run
 python index.py
 ```
 and just will return and put the directory path of workshop for unturned mod list
