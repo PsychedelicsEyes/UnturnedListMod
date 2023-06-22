@@ -16,11 +16,11 @@ def list_csv_files(directory):
 
         traverse_directories(directory, csvwriter)
 
-def traverse_directories(directory, csvwriter):
+def traverse_directories(directory, csvwriter, subfolder=''):
 
     for file_name in os.listdir(directory):
         absolute_path = os.path.join(directory, file_name)
-        
+
         if os.path.isfile(absolute_path):
 
             if file_name.endswith('.dat') and file_name not in ['English.dat', 'English(1).dat', 'Japanese.dat', 'Asset.dat', 'MasterBundle.dat']:
@@ -36,11 +36,19 @@ def traverse_directories(directory, csvwriter):
                         elif line.startswith('Type'):
                             file_type = line.strip()
 
-                csvwriter.writerow([file_name[:-4], item_id.strip('ID'), file_type.strip('Type')])
+                excluded_words = ['Ressources', 'Barricad', 'Large', 'Small', 'Medium', 'Larg', 'Decal', 'Effect']
+                if file_type and not any(word in file_type for word in excluded_words):
+                    csvwriter.writerow([file_name[:-4], item_id.strip('ID'), file_type.strip('Type')])
 
         elif os.path.isdir(absolute_path):
 
-            traverse_directories(absolute_path, csvwriter)
+            subfolder_name = os.path.basename(absolute_path)
+            if subfolder_name.isdigit():
+                new_subfolder = os.path.join(subfolder, subfolder_name)
+                csvwriter.writerow(['', '', '', new_subfolder]) 
+                traverse_directories(absolute_path, csvwriter, new_subfolder)
+            else:
+                traverse_directories(absolute_path, csvwriter, subfolder)
 
 def display_loading_animation():
     animation = "|/-\\"
